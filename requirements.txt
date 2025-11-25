@@ -6,3 +6,4 @@ psycopg[binary]
 psycopg-pool
 unstructured
 markdown
+python-dotenv
