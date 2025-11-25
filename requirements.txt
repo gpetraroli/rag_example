@@ -1,0 +1,8 @@
+langchain
+langchain-community
+langchain-ollama
+langchain-postgres
+psycopg[binary]
+psycopg-pool
+unstructured
+markdown
