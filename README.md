@@ -15,7 +15,7 @@ Key Components:
 
 > **Note:** <br />
 > For audio files you need to install FFmpeg on your system: (https://www.ffmpeg.org/) <br />
-> Audio files are precessed with the `openai-whisper` library; this library will try to use your GPU (CUDA on Nvidia, MPS on Mac) automatically.
+> Audio files are processed with the `openai-whisper` library; this library will try to use your GPU (CUDA on Nvidia, MPS on Mac) automatically.
 > - If you have a GPU: Transcription will be very fast (seconds/minutes).
 > - If you are on CPU: Transcription will be slower (1x realtime or slower).
 
@@ -61,7 +61,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-Ingest the database with a markdown file
+Ingest the database with a file
 
 ```sh
 python .\app\ingest.py \path\to\file.md
