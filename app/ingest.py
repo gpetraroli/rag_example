@@ -1,13 +1,16 @@
 import os
 import sys
 import argparse
+import base64
 from dotenv import load_dotenv
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_postgres import PGVector
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
+from langchain_core.messages import HumanMessage
+
 
 load_dotenv()
 
@@ -84,6 +87,41 @@ def split_pdf_document(file_path: str) -> list[Document]:
 
     return splits
 
+def split_image(file_path: str) -> list[Document]:
+    """ Transform an image into a text and split it into chunks """
+    
+    llm = ChatOllama(model="llava", base_url=OLLAMA_URL)
+
+    base64_image = base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
+
+    message = HumanMessage(
+        content=[
+            {"type": "text", "text": "Describe this image in extreme detail. Include text found in the image, visual layout, and key objects."},
+            {"type": "image_url", "image_url": f"data:image/jpeg;base64,{base64_image}"},
+        ]
+    )
+
+    response = llm.invoke([message])
+    description = response.content
+
+    doc = Document(
+        page_content=description,
+        metadata={
+            "source": file_path,
+            "type": "image",
+            "original_content": "image_data"
+        }
+    )
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+    )
+    
+    splits = text_splitter.split_documents([doc])
+    
+    return splits
+
 def process_document(file_path):
     print(f"> PROCESSING: {file_path}")
 
@@ -96,6 +134,8 @@ def process_document(file_path):
         splits = split_markdown_document(file_path)
     elif file_path.endswith(".pdf"):
         splits = split_pdf_document(file_path)
+    elif file_path.endswith((".png", ".jpg", ".jpeg")):
+        splits = split_image(file_path)
     else:
         splits = split_text_document(file_path)
     print(f"> Split into {len(splits)} chunks.")
