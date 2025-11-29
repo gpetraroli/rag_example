@@ -19,7 +19,7 @@ The system runs locally via Docker containers, keeping all data on your machine.
 ## Requirements
 
 - Docker compose
-- Python
+- Python 3.10+
 
 ## Install
 
