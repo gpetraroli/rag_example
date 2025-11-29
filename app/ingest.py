@@ -100,6 +100,10 @@ def process_document(file_path):
         splits = split_text_document(file_path)
     print(f"> Split into {len(splits)} chunks.")
 
+    if len(splits) == 0:
+        print("> Error: No text found in the document.")
+        sys.exit(1)
+
     print("> Generating vectors...")
     embeddings = OllamaEmbeddings(model="nomic-embed-text", base_url=OLLAMA_URL)
 
