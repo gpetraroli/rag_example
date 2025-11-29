@@ -6,7 +6,13 @@ Key Components:
 - PostgreSQL with pgvector: Stores document embeddings
 - LangChain: Orchestrates the RAG pipeline
 
-**How it works:**
+## Use case
+
+Build a local Q&A system over your documents without external APIs. Useful for internal documentation, knowledge bases, or any text you want to search and query with AI.
+The system runs locally via Docker containers, keeping all data on your machine.
+
+## How it works
+
 1. Document ingestion (ingest.py): Loads markdown files, splits them, generates embeddings with Ollama, and stores vectors in PostgreSQL.
 
 2. Querying (query.py): Takes a question, retrieves relevant chunks from the vector database, and uses Mistral to generate answers.
@@ -18,9 +24,6 @@ Key Components:
 > Audio files are processed with the `openai-whisper` library; this library will try to use your GPU (CUDA on Nvidia, MPS on Mac) automatically.
 > - If you have a GPU: Transcription will be very fast (seconds/minutes).
 > - If you are on CPU: Transcription will be slower (1x realtime or slower).
-
-Use case: Build a local Q&A system over your documents without external APIs. Useful for internal documentation, knowledge bases, or any text you want to search and query with AI.
-The system runs locally via Docker containers, keeping all data on your machine.
 
 ## Requirements
 
