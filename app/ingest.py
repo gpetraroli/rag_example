@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 from dotenv import load_dotenv
-from langchain_community.document_loaders import TextLoader, UnstructuredMarkdownLoader
+from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_postgres import PGVector
@@ -13,13 +13,13 @@ load_dotenv()
 
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 DB_CONNECTION = os.getenv("DB_CONNECTION")
-CHUNK_SIZE = os.getenv("CHUNK_SIZE") or 1000
-CHUNK_OVERLAP = os.getenv("CHUNK_OVERLAP") or 200
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 200))
 
 def split_markdown_document(file_path: str) -> list[Document]:
     """ Split a markdown document into chunks """
 
-    loader = UnstructuredMarkdownLoader(file_path)
+    loader = TextLoader(file_path)
     docs = loader.load()
 
     headers_to_split_on = [
