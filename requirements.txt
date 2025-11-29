@@ -8,3 +8,4 @@ unstructured
 markdown
 python-dotenv
 pypdf
+openai-whisper

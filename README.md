@@ -11,7 +11,13 @@ Key Components:
 
 2. Querying (query.py): Takes a question, retrieves relevant chunks from the vector database, and uses Mistral to generate answers.
 
-**Supported documents**: Markdown, PDF, Text, and images (jpg, jpeg, png).
+**Supported documents**: Markdown, PDF, Text, images (jpg, jpeg, png) and audio files (mp3, wav, m4a, ogg, flac).
+
+> **Note:** <br />
+> For audio files you need to install FFmpeg on your system: (https://www.ffmpeg.org/) <br />
+> Audio files are precessed with the `openai-whisper` library; this library will try to use your GPU (CUDA on Nvidia, MPS on Mac) automatically.
+> - If you have a GPU: Transcription will be very fast (seconds/minutes).
+> - If you are on CPU: Transcription will be slower (1x realtime or slower).
 
 Use case: Build a local Q&A system over your documents without external APIs. Useful for internal documentation, knowledge bases, or any text you want to search and query with AI.
 The system runs locally via Docker containers, keeping all data on your machine.

@@ -10,6 +10,7 @@ from langchain_postgres import PGVector
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_core.messages import HumanMessage
+import whisper
 
 
 load_dotenv()
@@ -89,7 +90,7 @@ def split_pdf_document(file_path: str) -> list[Document]:
 
 def split_image(file_path: str) -> list[Document]:
     """ Transform an image into a text and split it into chunks """
-    
+
     llm = ChatOllama(model="llava", base_url=OLLAMA_URL)
 
     base64_image = base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
@@ -122,6 +123,31 @@ def split_image(file_path: str) -> list[Document]:
     
     return splits
 
+def split_audio(file_path: str) -> list[Document]:
+    """ Transcribe an audio file into text and split it into chunks """
+
+    model = whisper.load_model("base")
+    result = model.transcribe(file_path)
+
+    doc = Document(
+        page_content=result["text"],
+        metadata={
+            "source": file_path,
+            "type": "audio"
+        }
+    )
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n", ".", " ", ""],
+    )
+
+    splits = text_splitter.split_documents([doc])
+    
+    return splits
+
+
 def process_document(file_path):
     print(f"> PROCESSING: {file_path}")
 
@@ -136,8 +162,15 @@ def process_document(file_path):
         splits = split_pdf_document(file_path)
     elif file_path.endswith((".png", ".jpg", ".jpeg")):
         splits = split_image(file_path)
+    elif file_path.endswith((".mp3", ".wav", ".m4a", ".ogg", ".flac")):
+        splits = split_audio(file_path)
     else:
-        splits = split_text_document(file_path)
+        try:
+            splits = split_text_document(file_path)
+        except Exception as e:
+            print(f"> Error: Could not split text document: {e}")
+            sys.exit(1)
+
     print(f"> Split into {len(splits)} chunks.")
 
     if len(splits) == 0:
