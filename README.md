@@ -11,6 +11,8 @@ Key Components:
 
 2. Querying (query.py): Takes a question, retrieves relevant chunks from the vector database, and uses Mistral to generate answers.
 
+**Supported documents**: Markdown, PDF, Text, and more comming...
+
 Use case: Build a local Q&A system over your documents without external APIs. Useful for internal documentation, knowledge bases, or any text you want to search and query with AI.
 The system runs locally via Docker containers, keeping all data on your machine.
 
