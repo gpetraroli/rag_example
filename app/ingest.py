@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 from dotenv import load_dotenv
-from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_ollama import OllamaEmbeddings
 from langchain_postgres import PGVector
@@ -69,6 +69,21 @@ def split_text_document(file_path: str) -> list[Document]:
 
     return splits
 
+def split_pdf_document(file_path: str) -> list[Document]:
+    """ Split a pdf document into chunks """
+
+    loader = PyPDFLoader(file_path)
+    docs = loader.load()
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+    )
+
+    splits = text_splitter.split_documents(docs)
+
+    return splits
+
 def process_document(file_path):
     print(f"> PROCESSING: {file_path}")
 
@@ -79,6 +94,8 @@ def process_document(file_path):
     print("> Splitting document into chunks...")
     if file_path.endswith(".md"):
         splits = split_markdown_document(file_path)
+    elif file_path.endswith(".pdf"):
+        splits = split_pdf_document(file_path)
     else:
         splits = split_text_document(file_path)
     print(f"> Split into {len(splits)} chunks.")

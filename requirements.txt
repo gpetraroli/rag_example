@@ -7,3 +7,4 @@ psycopg-pool
 unstructured
 markdown
 python-dotenv
+pypdf
