@@ -2,36 +2,87 @@ import os
 import sys
 import argparse
 from dotenv import load_dotenv
-from langchain_community.document_loaders import UnstructuredMarkdownLoader
+from langchain_community.document_loaders import TextLoader, UnstructuredMarkdownLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings, ChatOllama
+from langchain_ollama import OllamaEmbeddings
 from langchain_postgres import PGVector
+from langchain_core.documents import Document
+from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 load_dotenv()
 
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 DB_CONNECTION = os.getenv("DB_CONNECTION")
+CHUNK_SIZE = os.getenv("CHUNK_SIZE") or 1000
+CHUNK_OVERLAP = os.getenv("CHUNK_OVERLAP") or 200
+
+def split_markdown_document(file_path: str) -> list[Document]:
+    """ Split a markdown document into chunks """
+
+    loader = UnstructuredMarkdownLoader(file_path)
+    docs = loader.load()
+
+    headers_to_split_on = [
+        ("#", "Header 1"),
+        ("##", "Header 2"),
+        ("###", "Header 3"),
+    ]
+
+    markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=headers_to_split_on,
+        strip_headers=False,
+    )
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n", " ", ""],
+    )
+
+    splits = []
+
+    for doc in docs:
+        md_header_splits = markdown_splitter.split_text(doc.page_content)
+
+        chunk_splits = text_splitter.split_documents(md_header_splits)
+
+        # Preserve the original document metadata
+        for chunk in chunk_splits:
+            chunk.metadata.update(doc.metadata)
+
+        splits.extend(chunk_splits)
+
+    return splits
+
+def split_text_document(file_path: str) -> list[Document]:
+    """ Split a text document into chunks """
+
+    loader = TextLoader(file_path)
+    docs = loader.load()
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+    )
+
+    splits = text_splitter.split_documents(docs)
+
+    return splits
 
 def process_document(file_path):
     print(f"> PROCESSING: {file_path}")
 
-    # 1. Load the document
-    print(f"> Loading document...")
     if not os.path.exists(file_path):
         print(f"Error: File not found: {file_path}")
         sys.exit(1)
 
-    loader = UnstructuredMarkdownLoader(file_path)
-    docs = loader.load()
-    print(f"> Loaded {len(docs)} documents.")
-
-    # 2. Split the document into chunks
-    print(f"> Splitting document into chunks...")
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    splits = text_splitter.split_documents(docs)
+    print("> Splitting document into chunks...")
+    if file_path.endswith(".md"):
+        splits = split_markdown_document(file_path)
+    else:
+        splits = split_text_document(file_path)
     print(f"> Split into {len(splits)} chunks.")
 
-    # 3. Embend
     print("> Generating vectors...")
     embeddings = OllamaEmbeddings(model="nomic-embed-text", base_url=OLLAMA_URL)
 
