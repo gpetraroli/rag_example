@@ -97,7 +97,14 @@ def split_image(file_path: str) -> list[Document]:
 
     message = HumanMessage(
         content=[
-            {"type": "text", "text": "Describe this image in extreme detail. Include text found in the image, visual layout, and key objects."},
+            {
+                "type": "text", 
+                "text": (
+                    "Analyze this image for a retrieval database. "
+                    "1. Transcribe any visible text exactly. "
+                    "2. Describe the visual layout and key objects in detail."
+                )
+            },
             {"type": "image_url", "image_url": f"data:image/jpeg;base64,{base64_image}"},
         ]
     )
