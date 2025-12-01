@@ -13,7 +13,7 @@ The system runs locally via Docker containers, keeping all data on your machine.
 
 ## How it works
 
-1. Document ingestion (ingest.py): Loads markdown files, splits them, generates embeddings with Ollama, and stores vectors in PostgreSQL.
+1. Document ingestion (ingest_document.py, ingest_directory.py): Loads files, splits them, generates embeddings with Ollama, and stores vectors in PostgreSQL.
 
 2. Querying (query.py): Takes a question, retrieves relevant chunks from the vector database, and uses Mistral to generate answers.
 
@@ -67,7 +67,13 @@ pip install -r requirements.txt
 Ingest the database with a file
 
 ```sh
-python .\app\ingest.py \path\to\file.md
+python .\app\ingest_document.py \path\to\file.md
+```
+
+Or ingest the database with all supported files in a directory
+
+```sh
+python .\app\ingest_directory.py \path\to\directory
 ```
 
 Ask a question
