@@ -172,13 +172,11 @@ def process_document(file_path: str) -> None:
         splits = split_image(file_path)
     elif file_path.endswith((".mp3", ".wav", ".m4a", ".ogg", ".flac")):
         splits = split_audio(file_path)
+    elif file_path.endswith(".txt"):
+        splits = split_text_document(file_path)
     else:
         print(f"> Error: Unsupported file type: {file_path}")
         return None
-        # try:
-        #     splits = split_text_document(file_path)
-        # except Exception as e:
-        #     print(f"> Error: Could not split text document: {e}")
 
     print(f"> Split into {len(splits)} chunks.")
 
