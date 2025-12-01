@@ -93,7 +93,8 @@ def split_image(file_path: str) -> list[Document]:
 
     llm = ChatOllama(model="llava", base_url=OLLAMA_URL)
 
-    base64_image = base64.b64encode(open(file_path, "rb").read()).decode("utf-8")
+    with open(file_path, "rb") as f:
+        base64_image = base64.b64encode(f.read()).decode("utf-8")
 
     message = HumanMessage(
         content=[
@@ -155,7 +156,7 @@ def split_audio(file_path: str) -> list[Document]:
     return splits
 
 
-def process_document(file_path):
+def process_document(file_path: str) -> None:
     print(f"> PROCESSING: {file_path}")
 
     if not os.path.exists(file_path):
