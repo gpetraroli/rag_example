@@ -9,3 +9,7 @@ markdown
 python-dotenv
 pypdf
 openai-whisper
+opencv-python
+moviepy
+scikit-image
+moviepy

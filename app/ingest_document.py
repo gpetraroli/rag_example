@@ -11,6 +11,8 @@ from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_core.messages import HumanMessage
 import whisper
+from video_processor import VideoProcessor
+import time
 
 
 load_dotenv()
@@ -174,6 +176,12 @@ def process_document(file_path: str) -> None:
         splits = split_audio(file_path)
     elif file_path.endswith(".txt"):
         splits = split_text_document(file_path)
+    elif file_path.endswith(".mp4"):
+        start_time = time.time()
+        video_processor = VideoProcessor()
+        splits = video_processor.process_video(file_path)
+        end_time = time.time()
+        print(f"> Video processing took {end_time - start_time:.2f} seconds.")
     else:
         print(f"> Error: Unsupported file type: {file_path}")
         return None
