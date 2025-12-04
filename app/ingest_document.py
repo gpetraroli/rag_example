@@ -17,10 +17,12 @@ import time
 
 load_dotenv()
 
+
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 DB_CONNECTION = os.getenv("DB_CONNECTION")
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
 CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 200))
+
 
 def split_markdown_document(file_path: str) -> list[Document]:
     """ Split a markdown document into chunks """
@@ -60,6 +62,7 @@ def split_markdown_document(file_path: str) -> list[Document]:
 
     return splits
 
+
 def split_text_document(file_path: str) -> list[Document]:
     """ Split a text document into chunks """
 
@@ -75,6 +78,7 @@ def split_text_document(file_path: str) -> list[Document]:
 
     return splits
 
+
 def split_pdf_document(file_path: str) -> list[Document]:
     """ Split a pdf document into chunks """
 
@@ -89,6 +93,7 @@ def split_pdf_document(file_path: str) -> list[Document]:
     splits = text_splitter.split_documents(docs)
 
     return splits
+
 
 def split_image(file_path: str) -> list[Document]:
     """ Transform an image into a text and split it into chunks """
@@ -132,6 +137,7 @@ def split_image(file_path: str) -> list[Document]:
     splits = text_splitter.split_documents([doc])
     
     return splits
+    
 
 def split_audio(file_path: str) -> list[Document]:
     """ Transcribe an audio file into text and split it into chunks """
