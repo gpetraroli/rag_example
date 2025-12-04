@@ -7,10 +7,13 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
+
 load_dotenv()
+
 
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 DB_CONNECTION = os.getenv("DB_CONNECTION")
+
 
 def query_agent(query):
     # 1. Connect to DB
