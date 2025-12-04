@@ -1,19 +1,21 @@
-from langchain_openai import ChatOpenAI
-from openai import OpenAI
 import os
-from langchain_core.documents import Document
 import cv2
-import argparse
+import base64
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, BaseMessage
+from langchain_core.documents import Document
+from openai import OpenAI
 from dotenv import load_dotenv
 from skimage.metrics import structural_similarity as ssim
-from langchain_core.messages import HumanMessage, BaseMessage
-import base64
 from moviepy import VideoFileClip
+
 
 load_dotenv()
 
+
 CHECK_INTERVAL_IN_SECONDS = 1
 SIMILARITY_THRESHOLD = 0.90
+
 
 class VideoProcessor:
     def __init__(self):
