@@ -2,6 +2,8 @@ import os
 import sys
 import argparse
 import base64
+import time
+import whisper
 from dotenv import load_dotenv
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -10,9 +12,7 @@ from langchain_postgres import PGVector
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 from langchain_core.messages import HumanMessage
-import whisper
-from video_processor import VideoProcessor
-import time
+from processors import VideoProcessor
 
 
 load_dotenv()
