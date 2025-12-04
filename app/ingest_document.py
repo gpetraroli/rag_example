@@ -185,7 +185,7 @@ def process_document(file_path: str) -> None:
     elif file_path.endswith(".mp4"):
         start_time = time.time()
         video_processor = VideoProcessor()
-        splits = video_processor.process_video(file_path)
+        splits = video_processor.process(file_path)
         end_time = time.time()
         print(f"> Video processing took {end_time - start_time:.2f} seconds.")
     else:

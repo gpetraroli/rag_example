@@ -8,6 +8,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from skimage.metrics import structural_similarity as ssim
 from moviepy import VideoFileClip
+from .processor_interface import ProcessorInterface
 
 
 load_dotenv()
@@ -17,7 +18,7 @@ CHECK_INTERVAL_IN_SECONDS = 1
 SIMILARITY_THRESHOLD = 0.90
 
 
-class VideoProcessor:
+class VideoProcessor(ProcessorInterface):
     def __init__(self):
         self.llm_vision = ChatOpenAI(model="gpt-4o", max_tokens=1024, api_key=os.getenv("OPENAI_API_KEY"))
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -29,7 +30,7 @@ class VideoProcessor:
             "audio_duration_seconds": 0
         }
 
-    def process_video(self, video_path: str) -> list[Document]:
+    def process(self, video_path: str) -> list[Document]:
         self.token_usage = {
             "completion_tokens": 0,
             "prompt_tokens": 0,
